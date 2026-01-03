@@ -25,6 +25,9 @@ venv/
 # MacOS files
 .DS_Store
 
+# Pytest cache
+.pytest_cache/
+
 # Static or build artifacts (if any temporary)
 static/css/.DS_Store
 static/js/.DS_Store

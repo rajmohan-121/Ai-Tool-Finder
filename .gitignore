@@ -1,0 +1,30 @@
+# Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# Database files
+*.db
+*.sqlite3
+
+# Environment variables / secrets
+.env
+
+# Logs
+*.log
+
+# IDE / editor folders
+.vscode/
+.idea/
+*.swp
+
+# MacOS files
+.DS_Store
+
+# Static or build artifacts (if any temporary)
+static/css/.DS_Store
+static/js/.DS_Store

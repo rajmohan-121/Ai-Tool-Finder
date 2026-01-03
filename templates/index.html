@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tool Finder</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Tool Finder</h1>
+            <div class="auth-buttons">
+                <button class="btn-admin" id="adminBtn" onclick="showAdminLogin()">Admin Panel</button>
+                <button class="btn-login hidden" id="loginBtn" onclick="showAdminLogin()">Login</button>
+                <button class="btn-logout hidden" id="logoutBtn" onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <!-- User Section -->
+        <div id="userSection">
+            <div class="section">
+                <h2>Discover AI Tools</h2>
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Category</label>
+                        <select id="categoryFilter" onchange="loadTools()">
+                            <option value="">All Categories</option>
+                            <option value="Image Generation">Image Generation</option>
+                            <option value="Text Generation">Text Generation</option>
+                            <option value="Code Assistant">Code Assistant</option>
+                            <option value="Testing">Testing</option>
+                            <option value="Voice & Audio">Voice & Audio</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Pricing</label>
+                        <select id="pricingFilter" onchange="loadTools()">
+                            <option value="">All Pricing</option>
+                            <option value="Free">Free</option>
+                            <option value="Subscription">Subscription</option>
+                            <option value="Paid">Paid</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Min Rating</label>
+                        <input type="number" id="ratingFilter" min="0" max="5" step="0.1" placeholder="0.0" onchange="loadTools()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div id="toolsGrid" class="tools-grid"></div>
+            </div>
+        </div>
+
+        <!-- Admin Section -->
+        <div id="adminSection" class="section hidden">
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="switchTab('tools')">Manage Tools</button>
+                <button class="tab-btn" onclick="switchTab('reviews')">Manage Reviews</button>
+            </div>
+
+            <div id="toolsTab">
+                <button class="btn btn-primary" onclick="showAddToolModal()">Add New Tool</button>
+                <div id="adminToolsGrid" class="tools-grid" style="margin-top: 20px;"></div>
+            </div>
+
+            <div id="reviewsTab" class="hidden">
+                <div id="reviewsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Admin Login</h2>
+                <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            </div>
+            <div id="loginMessage"></div>
+            <form onsubmit="adminLogin(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Tool Modal -->
+    <div id="toolModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="toolModalTitle">Add Tool</h2>
+                <span class="close" onclick="closeModal('toolModal')">&times;</span>
+            </div>
+            <div id="toolMessage"></div>
+            <form onsubmit="saveTool(event)">
+                <input type="hidden" id="toolId">
+                <div class="form-group">
+                    <label>Tool Name</label>
+                    <input type="text" id="toolName" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="toolDescription" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Use Case</label>
+                    <textarea id="toolUseCase" required placeholder="What is this tool best used for?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="toolCategory" required>
+                        <option value="Image Generation">Image Generation</option>
+                        <option value="Text Generation">Text Generation</option>
+                        <option value="Code Assistant">Code Assistant</option>
+                        <option value="Testing">Testing</option>
+                        <option value="Voice & Audio">Voice & Audio</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Pricing</label>
+                    <select id="toolPricing" required>
+                        <option value="Free">Free</option>
+                        <option value="Subscription">Subscription</option>
+                        <option value="Paid">Paid</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success" style="width: 100%;">Save Tool</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Write a Review</h2>
+                <span class="close" onclick="closeModal('reviewModal')">&times;</span>
+            </div>
+            <div id="reviewMessage"></div>
+            <form onsubmit="submitReview(event)">
+                <input type="hidden" id="reviewToolId">
+                <div class="form-group">
+                    <label>Rating</label>
+                    <div class="stars" id="ratingStars">
+                        <span class="star" onclick="setRating(1)">★</span>
+                        <span class="star" onclick="setRating(2)">★</span>
+                        <span class="star" onclick="setRating(3)">★</span>
+                        <span class="star" onclick="setRating(4)">★</span>
+                        <span class="star" onclick="setRating(5)">★</span>
+                    </div>
+                    <input type="hidden" id="reviewRating" required>
+                </div>
+                <div class="form-group">
+                    <label>Review</label>
+                    <textarea id="reviewText" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-success" style="width: 100%;">Submit Review</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
